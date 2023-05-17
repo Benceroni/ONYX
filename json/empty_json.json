@@ -1,0 +1,56 @@
+{
+  "artist": [
+    {
+      "*ARTIST HERE*": [
+        {
+          "Album": [
+            {
+              "*ALBUM HERE*": [
+                {
+                  "Song": "Song Title",
+                  "Lyrics": "Lyrics here"
+                },
+                { "Song": "Song Title", "Lyrics": "Lyrics here" }
+              ]
+            },
+            {
+              "*ALBUM HERE*": [
+                {
+                  "Song": "Song Title",
+                  "Lyrics": "Lyrics here"
+                },
+                { "Song": "Song Title", "Lyrics": "Lyrics here" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "*ARTIST HERE*": [
+        {
+          "Album": [
+            {
+              "*ALBUM HERE*": [
+                {
+                  "Song": "Song Title",
+                  "Lyrics": "Lyrics here"
+                },
+                { "Song": "Song Title", "Lyrics": "Lyrics here" }
+              ]
+            },
+            {
+              "*ALBUM HERE*": [
+                {
+                  "Song": "Song Title",
+                  "Lyrics": "Lyrics here"
+                },
+                { "Song": "Song Title", "Lyrics": "Lyrics here" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
