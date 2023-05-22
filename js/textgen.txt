@@ -236,3 +236,22 @@ json attempt 2
     }
   
 }
+
+
+// Checking functions. NOT to remain in the code.
+// function clickCheck() {
+//   for (var i = 0; i < testAlbumArray.length; i++) {
+//     console.log("albumIndexid" + [i]);
+//     if (document.getElementById("albumIndexid" + [i]).checked) {
+//       console.log(i);
+//     } else {
+//       console.log("This item isn't checked");
+//     }
+//   }
+// }
+
+// function clickCheckSimplified() {
+//   if (document.getElementById("albumIndexid0").checked) {
+//     console.log("First Button is Checked");
+//   }
+// }

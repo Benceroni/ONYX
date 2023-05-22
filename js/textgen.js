@@ -4,9 +4,19 @@ let lyricpool = [];
 let top5 = [];
 
 let artistVariable = null;
-console.log(artistVariable);
+// console.log(artistVariable);
 
 let albumTitle = null;
+
+var checkboxElems = null;
+
+let songFunctionAddedArray = [];
+
+let albumFunctionAddedArray = [];
+
+let songPostFunctionArray = [];
+
+let albumPostFunctionArray = [];
 
 // let testAlbumArray = [
 //   "Brand New Album One",
@@ -30,7 +40,7 @@ fetch(requestURL)
 
     // testAlbumArray;
 
-    const selectedArtist = "Brand New";
+    const selectedArtist = "Taylor Swift";
     // I need to make this fetched from the HTML selector later
 
     //This could be replaces with a "if taylor swift then {var = 0} else{var = 1}  "
@@ -39,12 +49,15 @@ fetch(requestURL)
         null;
       } else artistVariable = [i];
     }
-    console.log(artistVariable);
-    console.log(jsonObject.artists[artistVariable].albums.length);
+    // console.log(artistVariable);
+    // console.log(jsonObject.artists[artistVariable].albums.length);
 
     for (var i = 0; i < jsonObject.artists[artistVariable].albums.length; i++) {
       albumTitle = jsonObject.artists[artistVariable].albums[i].albumName;
       createAlbumElement(albumTitle, albumTitle);
+      albumFunctionAddedArray.push(albumTitle);
+      //
+      //
       for (
         var j = 0;
         j < jsonObject.artists[artistVariable].albums[i].songs.length;
@@ -52,38 +65,18 @@ fetch(requestURL)
       ) {
         songTitle = jsonObject.artists[artistVariable].albums[i].songs[j].song;
         addListElements(songTitle, songTitle, albumTitle);
-        console.log(songTitle);
+        songFunctionAddedArray.push(songTitle);
+        checkboxElemsFunction();
+
+        // console.log(songTitle);
       }
     }
-    console.log(jsonObject.artists[artistVariable].albums[0].songs[0]);
-    // for (song in songs)
-
-    // works with original data structure
-    // console.log(
-    //   jsonObject.artists[0]["Taylor Swift"][0]["Taylor Swift"][0].song
-    // );
-    //New Data structure
+    // console.log(jsonObject.artists[artistVariable].albums[0].songs[0]);
 
     // This is working\/
-    console.log(jsonObject.artists[artistVariable].artistName);
-
-    // console.log(jsonObject.artists.length);
-
-    // const artist = jsonObject.artists["Taylor Swift"][0];
-
-    // let forLoopAlbumLength = jsonObject[selectedArtist].length;
-
-    // for (var i = 0; i < forLoopAlbumLength; i++) {
-    //   createAlbumElement(testAlbumArray[i], "albumIndexid" + i);
-    //   const album = "album" + [i] + "songs";
-    //   console.log(album);
-    //   for (var j = 0; j < album.length; j++) {
-    //     // console.log([j]);
-    //   }
-    // }
+    // console.log(jsonObject.artists[artistVariable].artistName);
   });
 
-// let bruh = jsonObject.artists[0];
 function createAlbumElement(albumFunctionTitle, albumIndexiVariable) {
   const variableToggleFunction = createToggleButton(albumIndexiVariable);
 
@@ -93,22 +86,47 @@ function createAlbumElement(albumFunctionTitle, albumIndexiVariable) {
   const textnode = document.createTextNode(albumFunctionTitle);
   const albumElementChildOne = document.createElement("p");
   const albumElementChildTwoSongList = document.createElement("ul");
+
+  const albumElementDropDownButton = document.createElement("input");
+  albumElementDropDownButton.setAttribute("type", "image");
+  albumElementDropDownButton.setAttribute(
+    "id",
+    albumFunctionTitle + "dropDownButtonId"
+  );
+  albumElementDropDownButton.classList.add("flipButtonBefore");
+  albumElementDropDownButton.src = "images/dropDownArrow128px.png";
+  albumElementDropDownButton.height = 34;
+  albumElementDropDownButton.setAttribute(
+    "onclick",
+    "toggleDropdown('" +
+      albumFunctionTitle +
+      "'); addClass('" +
+      albumFunctionTitle +
+      "')"
+  );
+  // albumElementDropDownButton.setAttribute(
+  //   "onclick",
+  //   "addClass('" + albumFunctionTitle + "')"
+  // );
+
+  albumElementChildTwoSongList.classList.add("songList");
   albumElementChildTwoSongList.setAttribute("id", albumFunctionTitle + "ul");
 
   albumElementChildOne.appendChild(textnode);
   albumElement.appendChild(albumElementChildOne);
+  albumElement.appendChild(albumElementDropDownButton);
   albumElement.appendChild(albumElementChildTwoSongList);
 
   document.getElementById("albums").appendChild(albumElement);
-  document.getElementById(albumIndexiVariable).checked = true;
 }
-function createToggleButton(indexValueClassPassthrough) {
+function createToggleButton(indexValueIdPassthrough) {
   const switchButton = document.createElement("label");
   switchButton.classList.add("switch");
   const switchButtonElementOne = document.createElement("input");
   switchButtonElementOne.type = "checkbox";
-  // switchButtonElementOne.classList.add(indexValueClassPassthrough);
-  switchButtonElementOne.setAttribute("id", indexValueClassPassthrough);
+
+  switchButtonElementOne.setAttribute("id", indexValueIdPassthrough);
+  switchButtonElementOne.checked = true;
 
   const switchButtonElementTwo = document.createElement("span");
   switchButtonElementTwo.classList.add("slider");
@@ -117,6 +135,7 @@ function createToggleButton(indexValueClassPassthrough) {
   switchButton.appendChild(switchButtonElementOne);
   switchButton.appendChild(switchButtonElementTwo);
   return switchButton;
+
   // document.getElementById("albums").appendChild(switchButton);
 }
 
@@ -129,20 +148,108 @@ function addListElements(songFunctionTitle, songIndexiVariable, parentAlbumid) {
   document.getElementById(parentAlbumid + "ul").appendChild(listElement);
 }
 
-// Checking functions. NOT to remain in the code.
-function clickCheck() {
-  for (var i = 0; i < testAlbumArray.length; i++) {
-    console.log("albumIndexid" + [i]);
-    if (document.getElementById("albumIndexid" + [i]).checked) {
-      console.log(i);
-    } else {
-      console.log("This item isn't checked");
+function checkboxElemsFunction() {
+  checkboxElems = document.querySelectorAll("input[type='checkbox']");
+  for (var i = 0; i < checkboxElems.length; i++) {
+    checkboxElems[i].addEventListener("click", checkboxUpdater);
+    // console.log("checkbox elems working");
+  }
+}
+
+function checkParentCheckbox() {
+  toggleDropdown("Taylor Swift");
+  // console.log(checkboxElems);
+  // console.log("switch has been flipped");
+  // songParentId = document.getElementById(songArray[0]);
+  // console.log(songParentId.parentNode.parentNode.parentNode.getAttribute("id"));
+}
+
+console.log(albumFunctionAddedArray);
+
+function checkboxUpdater() {
+  // console.log("CheckboxUpdater Fired");
+  for (i = 0; i < albumFunctionAddedArray.length; i++) {
+    // console.log([i] + " fire instance");
+
+    let albumId = albumFunctionAddedArray[i];
+    // console.log(albumId);
+
+    parentCheckboxControlVerification(albumId);
+  }
+
+  for (i = 0; i < songFunctionAddedArray.length; i++) {
+    songPostFunctionArray = [];
+    albumPostFunctionArray = [];
+    // console.log(songFunctionAddedArray[i]);
+    if (isCheckboxChecked(songFunctionAddedArray[i])) {
+      let parentAlbumId = getParentAlbumId(songFunctionAddedArray[i]);
+      checkBoxTurnChecked(parentAlbumId);
     }
   }
 }
 
-function clickCheckSimplified() {
-  if (document.getElementById("albumIndexid0").checked) {
-    console.log("First Button is Checked");
+// Add song to list that get lyrics, make a checker to see if song is selected
+
+function getParentAlbumId(songId) {
+  // console.log("getParentAlbumId fired songID =" + songId);
+  let songParentAlbumId = document.getElementById(songId);
+
+  return songParentAlbumId.parentNode.parentNode.parentNode
+    .getAttribute("id")
+    .slice(0, -2);
+  // .slice removes the 'ul' from the parent ID, so it matches the album name
+}
+
+function isCheckboxChecked(checkboxId) {
+  // console.log("isCheckboxChecked fired checkbox Id = " + checkboxId);
+  if (document.getElementById(checkboxId).checked == true) {
+    return true;
+  } else {
+    return false;
   }
+}
+
+function checkBoxTurnChecked(checkboxId) {
+  // console.log("checkBoxTurnChecked fired checkboxId = " + checkboxId);
+  document.getElementById(checkboxId).checked = true;
+}
+
+function parentCheckboxControlVerification(albumTitle) {
+  let albumDocumentReference = document.getElementById(albumTitle);
+  let albumListDocumentReference = document.getElementById(albumTitle + "ul");
+
+  // console.log(albumDocumentReference);
+  // console.log(albumListDocumentReference);
+
+  if (albumListDocumentReference.classList.contains("responsive")) {
+    return null;
+  } else if (albumDocumentReference.checked == false) {
+    findAllChildrenAndCheckOrUncheck(albumTitle, false);
+  } else if (albumDocumentReference.checked == true) {
+    findAllChildrenAndCheckOrUncheck(albumTitle, true);
+  } else {
+    return null;
+  }
+}
+
+function findAllChildrenAndCheckOrUncheck(albumTitle, bool) {
+  let childSongElements = document
+    .getElementById(albumTitle + "ul")
+    .querySelectorAll("input[type='checkbox']");
+
+  for (var i = 0; i < childSongElements.length; i++) {
+    childSongElements[i].checked = bool;
+  }
+}
+
+function toggleDropdown(albumId) {
+  // console.log("tog dropdowncalled");
+  document.getElementById(albumId + "ul").classList.toggle("responsive");
+}
+
+function addClass(albumId) {
+  // console.log(albumId + "dropDownButtonId");
+  document
+    .getElementById(albumId + "dropDownButtonId")
+    .classList.toggle("flipButton");
 }

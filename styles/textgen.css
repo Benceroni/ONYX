@@ -8,6 +8,43 @@ body {
   }
 }
 
+li {
+  list-style-type: none;
+}
+
+/* *****    Song Dropdowns     ***** */
+
+.songList li {
+  /* display:none */
+  position: absolute;
+  opacity: 0;
+  transition: position 0.2s linear;
+  /* -moz-transition: all 0.5s ease-in-out; */
+  /* transition: 0.5s; */
+}
+
+.responsive li {
+  /* display:block */
+  position: static;
+  opacity: 1;
+
+  transition: opacity 0.2s linear;
+}
+
+.flipButtonBefore {
+  transition: 0.15s linear all;
+}
+
+.flipButton {
+  rotate: 180deg;
+  /* transition: 0.2s linear all; */
+}
+
+/* piece of test code */
+/* input {
+  rotate: 180deg;
+} */
+
 /* *****    Buttons     ***** */
 
 /* The switch - the box around the slider */
