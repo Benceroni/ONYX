@@ -1,4 +1,4 @@
-const requestURL = "/json/taylor_swift.json";
+const requestURL = "json/taylor_swift.json";
 
 let lyricpool = [];
 let top5 = [];
