@@ -10,6 +10,7 @@ body {
 
 li {
   list-style-type: none;
+  display: grid;
 }
 
 /* *****    Song Dropdowns     ***** */
@@ -36,7 +37,7 @@ li {
 }
 
 .flipButton {
-  rotate: 180deg;
+  rotate: 60deg;
   /* transition: 0.2s linear all; */
 }
 

@@ -3,7 +3,7 @@ const requestURL = "json/taylor_swift.json";
 let lyricpool = [];
 let top5 = [];
 
-let artistVariable = null;
+let artistVariable = "Taylor Swift";
 // console.log(artistVariable);
 
 let albumTitle = null;
@@ -14,9 +14,16 @@ let songFunctionAddedArray = [];
 
 let albumFunctionAddedArray = [];
 
-let songPostFunctionArray = [];
+let activeSongArray = [];
 
-let albumPostFunctionArray = [];
+let activeAlbumArray = [];
+
+let activeLyricsArray = [];
+
+var activeWordsArray = [];
+
+var activeWordsCountArray = [];
+var activeWordsCountCountArray = [];
 
 // let testAlbumArray = [
 //   "Brand New Album One",
@@ -29,6 +36,7 @@ let albumPostFunctionArray = [];
 // let album1songs = ["Album Song one", "Album song two", "Album Song three"];
 
 // let album2songs = ["Album Song one", "Album song two", "Album Song three"];
+let selectedArtist = "Taylor Swift";
 
 fetch(requestURL)
   .then(function (response) {
@@ -40,7 +48,6 @@ fetch(requestURL)
 
     // testAlbumArray;
 
-    const selectedArtist = "Taylor Swift";
     // I need to make this fetched from the HTML selector later
 
     //This could be replaces with a "if taylor swift then {var = 0} else{var = 1}  "
@@ -67,6 +74,7 @@ fetch(requestURL)
         addListElements(songTitle, songTitle, albumTitle);
         songFunctionAddedArray.push(songTitle);
         checkboxElemsFunction();
+        updateActiveSongArray();
 
         // console.log(songTitle);
       }
@@ -104,10 +112,6 @@ function createAlbumElement(albumFunctionTitle, albumIndexiVariable) {
       albumFunctionTitle +
       "')"
   );
-  // albumElementDropDownButton.setAttribute(
-  //   "onclick",
-  //   "addClass('" + albumFunctionTitle + "')"
-  // );
 
   albumElementChildTwoSongList.classList.add("songList");
   albumElementChildTwoSongList.setAttribute("id", albumFunctionTitle + "ul");
@@ -164,11 +168,9 @@ function checkParentCheckbox() {
   // console.log(songParentId.parentNode.parentNode.parentNode.getAttribute("id"));
 }
 
-console.log(albumFunctionAddedArray);
-
 function checkboxUpdater() {
   // console.log("CheckboxUpdater Fired");
-  for (i = 0; i < albumFunctionAddedArray.length; i++) {
+  for (var i = 0; i < albumFunctionAddedArray.length; i++) {
     // console.log([i] + " fire instance");
 
     let albumId = albumFunctionAddedArray[i];
@@ -177,15 +179,16 @@ function checkboxUpdater() {
     parentCheckboxControlVerification(albumId);
   }
 
-  for (i = 0; i < songFunctionAddedArray.length; i++) {
+  for (var i = 0; i < songFunctionAddedArray.length; i++) {
     songPostFunctionArray = [];
     albumPostFunctionArray = [];
-    // console.log(songFunctionAddedArray[i]);
+    // console.log(songFunctionAddedArray);
     if (isCheckboxChecked(songFunctionAddedArray[i])) {
       let parentAlbumId = getParentAlbumId(songFunctionAddedArray[i]);
       checkBoxTurnChecked(parentAlbumId);
     }
   }
+  updateActiveSongArray();
 }
 
 // Add song to list that get lyrics, make a checker to see if song is selected
@@ -201,6 +204,7 @@ function getParentAlbumId(songId) {
 }
 
 function isCheckboxChecked(checkboxId) {
+  // console.log(document.getElementById(checkboxId));
   // console.log("isCheckboxChecked fired checkbox Id = " + checkboxId);
   if (document.getElementById(checkboxId).checked == true) {
     return true;
@@ -244,6 +248,7 @@ function findAllChildrenAndCheckOrUncheck(albumTitle, bool) {
 
 function toggleDropdown(albumId) {
   // console.log("tog dropdowncalled");
+
   document.getElementById(albumId + "ul").classList.toggle("responsive");
 }
 
@@ -253,3 +258,204 @@ function addClass(albumId) {
     .getElementById(albumId + "dropDownButtonId")
     .classList.toggle("flipButton");
 }
+
+function updateActiveSongArray() {
+  // console.log("album function array: " + albumFunctionAddedArray);
+  activeAlbumArray = [];
+  for (let i = 0; i < albumFunctionAddedArray.length; i++) {
+    // console.log(i);
+    if (isCheckboxChecked(albumFunctionAddedArray[i]) === false) {
+      null;
+    } else {
+      activeAlbumArray.push(albumFunctionAddedArray[i]);
+      // console.log(activeAlbumArray);
+    }
+    activeSongArray = [];
+    for (let j = 0; j < songFunctionAddedArray.length; j++) {
+      if (isCheckboxChecked(songFunctionAddedArray[j]) === false) {
+        null;
+      } else {
+        activeSongArray.push(songFunctionAddedArray[j]);
+        // console.log(activeSongArray);
+      }
+    }
+  }
+  scrapeActiveSongLyrics();
+}
+
+function scrapeActiveSongLyrics() {
+  // console.log("Active Albums: " + activeAlbumArray);
+  // console.log("Active Songs" + activeSongArray);
+  fetch(requestURL)
+    .then(function (response) {
+      return response.json();
+    })
+
+    .then(function (jsonObject) {
+      // console.log(jsonObject.artists[0]);
+
+      for (var i = 0; i < jsonObject.artists.length; i++) {
+        // console.log("First for loop has run " + (i + 1) + " Time(s)");
+        if (jsonObject.artists[i].artistName === selectedArtist) {
+          // console.log("First if has run " + (i + 1) + " Time(s)");
+          activeWordsArray = [];
+          for (var j = 0; j < jsonObject.artists[i].albums.length; j++) {
+            // console.log("Second for loop has run " + (j + 1) + " Time(s)");
+            if (
+              activeAlbumArray.includes(
+                jsonObject.artists[i].albums[j].albumName
+              )
+            ) {
+              // console.log("second if has run");
+              // console.log(
+              //   "Second if album name " +
+              //     jsonObject.artists[i].albums[j].albumName
+              // );
+              for (
+                var k = 0;
+                k < jsonObject.artists[i].albums[j].songs.length;
+                k++
+              ) {
+                if (
+                  activeSongArray.includes(
+                    jsonObject.artists[i].albums[j].songs[k].song
+                  )
+                )
+                  addLyricsToLyricsArray(
+                    jsonObject.artists[i].albums[j].songs[k].lyrics
+                  );
+                // console.log("Lryics characters:");
+                // console.log(
+                //   jsonObject.artists[i].albums[j].songs[k].lyrics.length
+                // );
+              }
+            }
+          }
+        }
+      }
+      countLyrics();
+    });
+}
+
+function clearArraysAndCallLyrics() {
+  scrapeActiveSongLyrics();
+  countLyrics();
+}
+
+function addLyricsToLyricsArray(completeLyrics) {
+  var cleanerLyrics = completeLyrics.replace(/[.,?"!]/g, "");
+  var cleanedLyrics = cleanerLyrics.replace(/\s{2,}/g, " ");
+
+  var cleanedWords = cleanedLyrics.split(" ");
+  var lowerCleanedWords = cleanedWords.map((word) => word.toLowerCase());
+
+  for (var i = 0; i < lowerCleanedWords.length; i++) {
+    // console.log(cleanedWords[i]);
+    activeWordsArray.push(lowerCleanedWords[i]);
+  }
+  // console.log("active words array is:");
+  // console.log(activeWordsArray);
+}
+
+function countLyrics() {
+  // console.log(activeWordsArray);
+  activeWordsCountArray = [];
+  activeWordsCountCountArray = [];
+
+  for (var i = 0; i < activeWordsArray.length; i++) {
+    // console.log(activeWordsArray[i]);
+    // console.log(activeWordsCountArray);
+    if (activeWordsCountArray.includes(activeWordsArray[i])) {
+      var indexValue = activeWordsCountArray.indexOf(activeWordsArray[i]);
+      // var indexValue = oppositeArrayIndexValueFinder(activeWordsArray[i]);
+      activeWordsCountCountArray[indexValue] += 1;
+    } else {
+      activeWordsCountArray.push(activeWordsArray[i]);
+      activeWordsCountCountArray.push(1);
+    }
+  }
+  // console.log(activeWordsCountArray);
+  // console.log(activeWordsCountCountArray);
+  topFiveWords();
+  // console.log(activeWordsCountArray);
+}
+
+function printStuffOut() {
+  // console.log(activeWordsCountArray);
+  console.log("active word count count array " + activeWordsCountCountArray);
+  topFiveWords();
+}
+
+let firstLargest = null;
+let secondLargest = null;
+let thirdLargest = null;
+let fourthLargest = null;
+let fifthLargest = null;
+let firstLargestWord = null;
+
+function topFiveWords() {
+  firstLargest = activeWordsCountCountArray[0];
+  console.log(
+    "Active Word count count length is: " + activeWordsCountCountArray.length
+  );
+  console.log(activeWordsCountCountArray);
+  // console.log("first Largest: " + firstLargest);
+  for (var i = 0; i < activeWordsCountCountArray.length; i++) {
+    // console.log([i] + " run through");
+    // console.log(
+    //   "first Largest: " +
+    //     firstLargest +
+    //     "compared to: " +
+    //     activeWordsCountCountArray[i]
+    // );
+    // console.log(
+    //   activeWordsCountCountArray.indexOf(activeWordsCountCountArray[i])
+    // );
+    if (firstLargest < activeWordsCountCountArray[i]) {
+      // console.log(firstLargest);
+      // console.log(activeWordsCountArray[i]);
+      // console.log(activeWordsCountCountArray[i]);
+      var indexValue = activeWordsCountCountArray.indexOf(
+        activeWordsCountCountArray[i]
+      );
+      // console.log("first largest is  " + firstLargest);
+      fifthLargest = fourthLargest;
+      fourthLargest = thirdLargest;
+      thirdLargest = secondLargest;
+      secondLargest = firstLargestWord;
+      firstLargestWord = activeWordsCountArray[indexValue];
+      // console.log("First largest " + firstLargestWord);
+      // console.log("second largest " + secondLargest);
+
+      // console.log(
+      //   "Most common words are:" +
+      //     firstLargestWord +
+      //     ", " +
+      //     secondLargest +
+      //     ", " +
+      //     thirdLargest +
+      //     ", " +
+      //     fourthLargest +
+      //     ", " +
+      //     fifthLargest
+      // );
+    }
+  }
+}
+
+// function oppositeArrayIndexValueFinder(
+//   valueYouWantToFindMatchingIndexValueFor
+// ) {
+//   var indexValue = null;
+
+//   if (typeof valueYouWantToFindMatchingIndexValueFor === Number) {
+//     indexValue = activeWordsCountCountArray.indexOf(
+//       valueYouWantToFindMatchingIndexValueFor
+//     );
+//   } else {
+//     indexValue = activeWordsArray.indexOf(
+//       valueYouWantToFindMatchingIndexValueFor
+//     );
+//   }
+//   return indexValue;
+// }
