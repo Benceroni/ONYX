@@ -24,6 +24,9 @@ var activeWordsArray = [];
 
 var activeWordsCountArray = [];
 var activeWordsCountCountArray = [];
+var activeLyricCountAndLyric = [];
+
+var lyricsAlreadyInLyricCountArray = [];
 
 // let testAlbumArray = [
 //   "Brand New Album One",
@@ -36,7 +39,20 @@ var activeWordsCountCountArray = [];
 // let album1songs = ["Album Song one", "Album song two", "Album Song three"];
 
 // let album2songs = ["Album Song one", "Album song two", "Album Song three"];
-let selectedArtist = "Taylor Swift";
+let selectedArtist = "Brand New";
+
+function logAllArrays() {
+  console.log(
+    "songFunctionAddedArray: " +
+      songFunctionAddedArray +
+      " albumFunctionAddedArray: " +
+      songFunctionAddedArray +
+      "albumFunctionAddedArray: " +
+      albumFunctionAddedArray +
+      " lyricsAlreadyInLyricCountArray: " +
+      lyricsAlreadyInLyricCountArray
+  );
+}
 
 fetch(requestURL)
   .then(function (response) {
@@ -74,7 +90,6 @@ fetch(requestURL)
         addListElements(songTitle, songTitle, albumTitle);
         songFunctionAddedArray.push(songTitle);
         checkboxElemsFunction();
-        updateActiveSongArray();
 
         // console.log(songTitle);
       }
@@ -83,6 +98,11 @@ fetch(requestURL)
 
     // This is working\/
     // console.log(jsonObject.artists[artistVariable].artistName);
+    updateActiveSongArray();
+    //
+    //initialization update active song array here
+    //
+    //this works
   });
 
 function createAlbumElement(albumFunctionTitle, albumIndexiVariable) {
@@ -169,7 +189,8 @@ function checkParentCheckbox() {
 }
 
 function checkboxUpdater() {
-  // console.log("CheckboxUpdater Fired");
+  console.log("CheckboxUpdater Fired");
+  console.log("album function added array is " + albumFunctionAddedArray);
   for (var i = 0; i < albumFunctionAddedArray.length; i++) {
     // console.log([i] + " fire instance");
 
@@ -178,16 +199,15 @@ function checkboxUpdater() {
 
     parentCheckboxControlVerification(albumId);
   }
-
+  console.log("song function added array is: " + songFunctionAddedArray);
   for (var i = 0; i < songFunctionAddedArray.length; i++) {
-    songPostFunctionArray = [];
-    albumPostFunctionArray = [];
     // console.log(songFunctionAddedArray);
     if (isCheckboxChecked(songFunctionAddedArray[i])) {
       let parentAlbumId = getParentAlbumId(songFunctionAddedArray[i]);
       checkBoxTurnChecked(parentAlbumId);
     }
   }
+  console.log("Update active song array SHOULD be called next");
   updateActiveSongArray();
 }
 
@@ -260,7 +280,7 @@ function addClass(albumId) {
 }
 
 function updateActiveSongArray() {
-  // console.log("album function array: " + albumFunctionAddedArray);
+  console.log("update active song array fired");
   activeAlbumArray = [];
   for (let i = 0; i < albumFunctionAddedArray.length; i++) {
     // console.log(i);
@@ -284,6 +304,8 @@ function updateActiveSongArray() {
 }
 
 function scrapeActiveSongLyrics() {
+  console.log("scrape active songs lyrics function fired");
+
   // console.log("Active Albums: " + activeAlbumArray);
   // console.log("Active Songs" + activeSongArray);
   fetch(requestURL)
@@ -300,6 +322,7 @@ function scrapeActiveSongLyrics() {
           // console.log("First if has run " + (i + 1) + " Time(s)");
           activeWordsArray = [];
           for (var j = 0; j < jsonObject.artists[i].albums.length; j++) {
+            // console.log(jsonObject.artists[i].albums.length);
             // console.log("Second for loop has run " + (j + 1) + " Time(s)");
             if (
               activeAlbumArray.includes(
@@ -320,10 +343,11 @@ function scrapeActiveSongLyrics() {
                   activeSongArray.includes(
                     jsonObject.artists[i].albums[j].songs[k].song
                   )
-                )
+                ) {
                   addLyricsToLyricsArray(
                     jsonObject.artists[i].albums[j].songs[k].lyrics
                   );
+                }
                 // console.log("Lryics characters:");
                 // console.log(
                 //   jsonObject.artists[i].albums[j].songs[k].lyrics.length
@@ -338,11 +362,14 @@ function scrapeActiveSongLyrics() {
 }
 
 function clearArraysAndCallLyrics() {
+  console.log("clear arrays and call lyrics function fired");
+
   scrapeActiveSongLyrics();
-  countLyrics();
 }
 
 function addLyricsToLyricsArray(completeLyrics) {
+  console.log("add lyrics to lyrics array function fired");
+
   var cleanerLyrics = completeLyrics.replace(/[.,?"!]/g, "");
   var cleanedLyrics = cleanerLyrics.replace(/\s{2,}/g, " ");
 
@@ -353,109 +380,67 @@ function addLyricsToLyricsArray(completeLyrics) {
     // console.log(cleanedWords[i]);
     activeWordsArray.push(lowerCleanedWords[i]);
   }
+  // console.log(activeLyricCountAndLyric);
+
   // console.log("active words array is:");
   // console.log(activeWordsArray);
 }
 
 function countLyrics() {
-  // console.log(activeWordsArray);
-  activeWordsCountArray = [];
-  activeWordsCountCountArray = [];
+  activeLyricCountAndLyric = [];
+  lyricsAlreadyInLyricCountArray = [];
 
   for (var i = 0; i < activeWordsArray.length; i++) {
     // console.log(activeWordsArray[i]);
     // console.log(activeWordsCountArray);
-    if (activeWordsCountArray.includes(activeWordsArray[i])) {
-      var indexValue = activeWordsCountArray.indexOf(activeWordsArray[i]);
-      // var indexValue = oppositeArrayIndexValueFinder(activeWordsArray[i]);
-      activeWordsCountCountArray[indexValue] += 1;
+    // console.log(activeLyricCountAndLyric);
+
+    var word = activeWordsArray[i];
+    // console.log(word);
+    if (lyricsAlreadyInLyricCountArray.includes(word)) {
+      // find key value pair and add 1 to count
+      var indexValue = activeWordsCountArray.indexOf(word);
+      var indexValue = activeLyricCountAndLyric
+        .map(function (obj) {
+          return obj.lyric;
+        })
+        .indexOf(word);
+
+      // console.log(activeLyricCountAndLyric[indexValue].count);
+      // console.log(activeLyricCountAndLyric);
+
+      activeLyricCountAndLyric[indexValue].count += 1;
+      // console.log(activeLyricCountAndLyric);
     } else {
-      activeWordsCountArray.push(activeWordsArray[i]);
-      activeWordsCountCountArray.push(1);
+      activeLyricCountAndLyric.push({ count: 1, lyric: word });
+      lyricsAlreadyInLyricCountArray.push(word);
     }
   }
-  // console.log(activeWordsCountArray);
-  // console.log(activeWordsCountCountArray);
-  topFiveWords();
-  // console.log(activeWordsCountArray);
+  // console.log(activeLyricCountAndLyric);
+  // console.log(lyricsAlreadyInLyricCountArray);
+  rankOrderLyricAndLyricCountArray();
 }
 
 function printStuffOut() {
-  // console.log(activeWordsCountArray);
-  console.log("active word count count array " + activeWordsCountCountArray);
-  topFiveWords();
+  console.log("Print stuff out function fired");
+  // console.log("active word count count array " + activeWordsCountCountArray);
+  rankOrderLyricAndLyricCountArray();
 }
 
-let firstLargest = null;
-let secondLargest = null;
-let thirdLargest = null;
-let fourthLargest = null;
-let fifthLargest = null;
-let firstLargestWord = null;
+let excludedLyricsArray = ["kaelei", "seven"];
 
-function topFiveWords() {
-  firstLargest = activeWordsCountCountArray[0];
-  console.log(
-    "Active Word count count length is: " + activeWordsCountCountArray.length
+function rankOrderLyricAndLyricCountArray() {
+  console.log("rank order Lyric and lyric count array function fired");
+
+  let unfilteredTopWordsArray = activeLyricCountAndLyric.sort(
+    (b, a) => a.count - b.count
   );
-  console.log(activeWordsCountCountArray);
-  // console.log("first Largest: " + firstLargest);
-  for (var i = 0; i < activeWordsCountCountArray.length; i++) {
-    // console.log([i] + " run through");
-    // console.log(
-    //   "first Largest: " +
-    //     firstLargest +
-    //     "compared to: " +
-    //     activeWordsCountCountArray[i]
-    // );
-    // console.log(
-    //   activeWordsCountCountArray.indexOf(activeWordsCountCountArray[i])
-    // );
-    if (firstLargest < activeWordsCountCountArray[i]) {
-      // console.log(firstLargest);
-      // console.log(activeWordsCountArray[i]);
-      // console.log(activeWordsCountCountArray[i]);
-      var indexValue = activeWordsCountCountArray.indexOf(
-        activeWordsCountCountArray[i]
-      );
-      // console.log("first largest is  " + firstLargest);
-      fifthLargest = fourthLargest;
-      fourthLargest = thirdLargest;
-      thirdLargest = secondLargest;
-      secondLargest = firstLargestWord;
-      firstLargestWord = activeWordsCountArray[indexValue];
-      // console.log("First largest " + firstLargestWord);
-      // console.log("second largest " + secondLargest);
-
-      // console.log(
-      //   "Most common words are:" +
-      //     firstLargestWord +
-      //     ", " +
-      //     secondLargest +
-      //     ", " +
-      //     thirdLargest +
-      //     ", " +
-      //     fourthLargest +
-      //     ", " +
-      //     fifthLargest
-      // );
-    }
-  }
+  console.log("bouta hit that fat for function");
+  console.log(excludedLyricsArray);
+  console.log(unfilteredTopWordsArray);
+  let topFiveWords = unfilteredTopWordsArray.filter(
+    (word) => !excludedLyricsArray.includes(word.lyric)
+  );
+  console.log(topFiveWords);
+  console.log(topFiveWords.slice(0, 5));
 }
-
-// function oppositeArrayIndexValueFinder(
-//   valueYouWantToFindMatchingIndexValueFor
-// ) {
-//   var indexValue = null;
-
-//   if (typeof valueYouWantToFindMatchingIndexValueFor === Number) {
-//     indexValue = activeWordsCountCountArray.indexOf(
-//       valueYouWantToFindMatchingIndexValueFor
-//     );
-//   } else {
-//     indexValue = activeWordsArray.indexOf(
-//       valueYouWantToFindMatchingIndexValueFor
-//     );
-//   }
-//   return indexValue;
-// }
