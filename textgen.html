@@ -29,10 +29,30 @@
           type="button"
           id="addEventer"
           value="update Lyric List"
-          onclick="scrapeActiveSongLyrics(); printStuffOut()"
+          onclick="scrapeActiveSongLyrics(); printStuffOut(); updateExcludedWordElements();"
+        />
+        <input
+          type="button"
+          id="addEventer"
+          value="update Lyric List"
+          onclick="removeAllChildren('excludedWordsul')"
         />
       </section>
       <ul id="albums"></ul>
+      <div id="excludedWords">
+        <id class="excludedWordsDropDown">
+          <p>Excluded Words</p>
+          <input
+            type="image"
+            src="images/dropDownArrow128px.png"
+            height="34"
+            class="flipButtonBefore"
+            id="excludedWordsdropDownButtonId"
+            onclick="toggleDropdown('excludedWords'); addClass('excludedWords')"
+          />
+        </id>
+        <ul id="excludedWordsul" class="songList"></ul>
+      </div>
       <script src="js/textgen.js" defer></script>
     </main>
     <footer></footer>

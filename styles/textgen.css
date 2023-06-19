@@ -8,8 +8,27 @@ body {
   }
 }
 
+ul {
+  padding-left: 5vw;
+  padding-right: 5vw;
+}
+
 li {
   list-style-type: none;
+  display: grid;
+  grid-template-columns: 25vw auto 10vw;
+}
+
+li:p {
+  display: none;
+}
+
+.songList li {
+  grid-template-columns: 20vw 50vw;
+}
+
+/* *****    excluded words dropdown **** */
+.excludedWords {
   display: grid;
 }
 
@@ -25,7 +44,8 @@ li {
 }
 
 .responsive li {
-  /* display:block */
+  /* display: block; */
+
   position: static;
   opacity: 1;
 
@@ -40,11 +60,6 @@ li {
   rotate: 60deg;
   /* transition: 0.2s linear all; */
 }
-
-/* piece of test code */
-/* input {
-  rotate: 180deg;
-} */
 
 /* *****    Buttons     ***** */
 

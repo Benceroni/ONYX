@@ -28,18 +28,9 @@ var activeLyricCountAndLyric = [];
 
 var lyricsAlreadyInLyricCountArray = [];
 
-// let testAlbumArray = [
-//   "Brand New Album One",
-//   "Brand New Album Two",
-//   "Brand New Album Three",
-// ];
+let excludedLyricsArray = ["kaelei", "seven"];
 
-// let album0songs = ["Album Song one", "Album song two", "Album Song three"];
-
-// let album1songs = ["Album Song one", "Album song two", "Album Song three"];
-
-// let album2songs = ["Album Song one", "Album song two", "Album Song three"];
-let selectedArtist = "Brand New";
+let selectedArtist = "Taylor Swift";
 
 function logAllArrays() {
   console.log(
@@ -90,19 +81,10 @@ fetch(requestURL)
         addListElements(songTitle, songTitle, albumTitle);
         songFunctionAddedArray.push(songTitle);
         checkboxElemsFunction();
-
-        // console.log(songTitle);
       }
     }
-    // console.log(jsonObject.artists[artistVariable].albums[0].songs[0]);
 
-    // This is working\/
-    // console.log(jsonObject.artists[artistVariable].artistName);
     updateActiveSongArray();
-    //
-    //initialization update active song array here
-    //
-    //this works
   });
 
 function createAlbumElement(albumFunctionTitle, albumIndexiVariable) {
@@ -143,6 +125,7 @@ function createAlbumElement(albumFunctionTitle, albumIndexiVariable) {
 
   document.getElementById("albums").appendChild(albumElement);
 }
+
 function createToggleButton(indexValueIdPassthrough) {
   const switchButton = document.createElement("label");
   switchButton.classList.add("switch");
@@ -166,8 +149,10 @@ function createToggleButton(indexValueIdPassthrough) {
 function addListElements(songFunctionTitle, songIndexiVariable, parentAlbumid) {
   const variableToggleFunction = createToggleButton(songIndexiVariable);
   const listElement = document.createElement("li");
+  const textnode = document.createElement("p");
   listElement.appendChild(variableToggleFunction);
-  const textnode = document.createTextNode(songFunctionTitle);
+  const childPElementTextHolder = document.createTextNode(songFunctionTitle);
+  textnode.appendChild(childPElementTextHolder);
   listElement.appendChild(textnode);
   document.getElementById(parentAlbumid + "ul").appendChild(listElement);
 }
@@ -268,7 +253,6 @@ function findAllChildrenAndCheckOrUncheck(albumTitle, bool) {
 
 function toggleDropdown(albumId) {
   // console.log("tog dropdowncalled");
-
   document.getElementById(albumId + "ul").classList.toggle("responsive");
 }
 
@@ -427,8 +411,6 @@ function printStuffOut() {
   rankOrderLyricAndLyricCountArray();
 }
 
-let excludedLyricsArray = ["kaelei", "seven"];
-
 function rankOrderLyricAndLyricCountArray() {
   console.log("rank order Lyric and lyric count array function fired");
 
@@ -443,4 +425,46 @@ function rankOrderLyricAndLyricCountArray() {
   );
   console.log(topFiveWords);
   console.log(topFiveWords.slice(0, 5));
+}
+
+function updateExcludedWordElements() {
+  if (document.getElementById("excludedWordsul").lastElementChild) {
+    removeAllChildren("excludedWordsul");
+  }
+  for (var i = 0; i < excludedLyricsArray.length; i++) {
+    const listElement = document.createElement("li");
+    const excludedWord = document.createElement("p");
+    const wordRemover = document.createElement("input");
+    wordRemover.type = "image";
+    wordRemover.src = "'x'ImageHolder";
+    wordRemover.setAttribute(
+      "onclick",
+      "removeWordFromExclusionArray('" + excludedLyricsArray[i] + "')"
+    );
+    const textNode = document.createTextNode(excludedLyricsArray[i]);
+
+    excludedWord.appendChild(textNode);
+    listElement.appendChild(excludedWord);
+    listElement.appendChild(wordRemover);
+    document.getElementById("excludedWordsul").appendChild(listElement);
+  }
+}
+
+function removeWordFromExclusionArray(wordToRemove) {
+  console.log(wordToRemove);
+  console.log(excludedLyricsArray);
+  excludedLyricsArray = excludedLyricsArray.filter(
+    (word) => word !== wordToRemove
+  );
+  console.log(excludedLyricsArray);
+  updateExcludedWordElements();
+}
+
+function removeAllChildren(elementIdToRemove) {
+  const myNode = document.getElementById(elementIdToRemove);
+  console.log(myNode.lastElementChild);
+  while (myNode.lastElementChild) {
+    console.log(myNode.lastElementChild);
+    myNode.removeChild(myNode.lastElementChild);
+  }
 }
